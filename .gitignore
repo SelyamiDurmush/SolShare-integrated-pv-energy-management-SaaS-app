@@ -1,0 +1,15 @@
+# Ignore node_modules and env files
+node_modules/
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.pytest_cache/
+
+# SvelteKit
+.svelte-kit/
+build/
+dist/
