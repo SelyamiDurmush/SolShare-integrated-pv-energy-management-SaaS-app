@@ -13,3 +13,6 @@ venv/
 .svelte-kit/
 build/
 dist/
+
+#pdf
+.pdf
