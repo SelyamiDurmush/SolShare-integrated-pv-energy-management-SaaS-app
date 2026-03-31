@@ -1,6 +1,6 @@
 # SolShare Energy Management Application (PoC)
 
-An integrated energy management platform built for multi-tenant buildings to share solar PV production equitably and distribute energy bills fairly based on static or dynamic allocation algorithms.
+Developing a full-stack SaaS platform that enables multi-tenant buildings to fairly distribute rooftop solar (PV) energy, track real-time usage, and automate transparent billing for individual apartments and process online payment.
 
 ## 🚀 Technology Stack
 
