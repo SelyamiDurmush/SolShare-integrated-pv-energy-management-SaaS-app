@@ -117,7 +117,7 @@
   async function loadEnergy(period: Period) {
     isLoadingChart = true;
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/v1/analytics/energy-overview?period=${period}`, {
+      const res = await fetch(`/api/v1/analytics/energy-overview?period=${period}`, {
         headers: { Authorization: `Bearer ${token()}` }
       });
       if (res.ok) {
@@ -141,7 +141,7 @@
   async function loadApartments() {
     isLoadingApt = true;
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/analytics/apartment-usage', {
+      const res = await fetch('/api/v1/analytics/apartment-usage', {
         headers: { Authorization: `Bearer ${token()}` }
       });
       if (res.ok) aptData = await res.json();
@@ -157,7 +157,7 @@
 
   async function loadAlerts() {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/alerts/?include_resolved=false', {
+      const res = await fetch('/api/v1/alerts/?include_resolved=false', {
         headers: { Authorization: `Bearer ${token()}` }
       });
       if (res.ok) recentAlerts = (await res.json()).slice(0, 5);

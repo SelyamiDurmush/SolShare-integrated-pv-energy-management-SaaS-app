@@ -29,7 +29,7 @@
     isLoading = true;
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/api/v1/alerts/?include_resolved=${showResolved}`,
+        `/api/v1/alerts/?include_resolved=${showResolved}`,
         { headers: { Authorization: `Bearer ${token()}` } }
       );
       if (res.ok) alerts = await res.json();
@@ -37,7 +37,7 @@
   }
 
   async function markRead(id: number) {
-    await fetch(`http://127.0.0.1:8000/api/v1/alerts/${id}/read`, {
+    await fetch(`/api/v1/alerts/${id}/read`, {
       method: 'PATCH', headers: { Authorization: `Bearer ${token()}` }
     });
     alerts = alerts.map(a => a.id === id ? { ...a, is_read: true } : a);
@@ -47,7 +47,7 @@
   async function resolve(id: number) {
     removing = new Set([...removing, id]);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/v1/alerts/${id}/resolve`, {
+      const res = await fetch(`/api/v1/alerts/${id}/resolve`, {
         method: 'PATCH', headers: { Authorization: `Bearer ${token()}` }
       });
       if (res.ok) {
@@ -67,7 +67,7 @@
     try {
       const unread = alerts.filter(a => !a.is_read);
       await Promise.all(unread.map(a =>
-        fetch(`http://127.0.0.1:8000/api/v1/alerts/${a.id}/read`, {
+        fetch(`/api/v1/alerts/${a.id}/read`, {
           method: 'PATCH', headers: { Authorization: `Bearer ${token()}` }
         })
       ));
@@ -84,7 +84,7 @@
         removing = new Set([...removing, a.id]);
       }
       await Promise.all(active.map(a =>
-        fetch(`http://127.0.0.1:8000/api/v1/alerts/${a.id}/resolve`, {
+        fetch(`/api/v1/alerts/${a.id}/resolve`, {
           method: 'PATCH', headers: { Authorization: `Bearer ${token()}` }
         })
       ));

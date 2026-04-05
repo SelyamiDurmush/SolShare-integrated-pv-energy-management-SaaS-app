@@ -40,12 +40,12 @@
     if (!token) { goto('/login'); return; }
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/health');
+      const res = await fetch('/health');
       backendStatus = res.ok ? 'connected' : 'error';
     } catch { backendStatus = 'error'; }
 
     try {
-      const userRes = await fetch('http://127.0.0.1:8000/api/v1/users/me', {
+      const userRes = await fetch('/api/v1/users/me', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (userRes.ok) {

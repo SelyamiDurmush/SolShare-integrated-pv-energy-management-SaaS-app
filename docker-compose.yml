@@ -4,24 +4,15 @@ services:
     build: ./backend
     ports:
       - "8000:8000"
-    environment:
-      - DATABASE_URL=postgres://user:password@db:5432/solshare
-    depends_on:
-      - db
+    # We mount a volume so your SQLite .db file doesn't get deleted if the container restarts
+    volumes:
+      - sqlite_data:/app
 
   frontend:
     build: ./frontend
     ports:
       - "5173:5173"
-
-  db:
-    image: postgres:15
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: solshare
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
+      - BACKEND_URL=http://backend:8000
 volumes:
-  postgres_data:
+  sqlite_data:

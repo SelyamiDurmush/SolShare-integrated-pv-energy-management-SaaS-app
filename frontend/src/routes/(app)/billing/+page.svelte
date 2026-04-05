@@ -13,7 +13,7 @@
     isLoading = true;
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch('http://127.0.0.1:8000/api/v1/billing/statements', {
+      const res = await fetch('/api/v1/billing/statements', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {

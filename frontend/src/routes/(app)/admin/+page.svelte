@@ -33,7 +33,7 @@
   async function fetchUsers() {
     const token = localStorage.getItem('access_token');
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/users/', {
+      const res = await fetch('/api/v1/users/', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) users = await res.json();
@@ -47,7 +47,7 @@
     addError = '';
     const token = localStorage.getItem('access_token');
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/users/', {
+      const res = await fetch('/api/v1/users/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ email: addEmail, password: addPassword, full_name: addName, role: addRole })
@@ -93,7 +93,7 @@
     if (editNewPassword.trim()) payload.password = editNewPassword;
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/v1/users/${editUser.id}`, {
+      const res = await fetch(`/api/v1/users/${editUser.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(payload)

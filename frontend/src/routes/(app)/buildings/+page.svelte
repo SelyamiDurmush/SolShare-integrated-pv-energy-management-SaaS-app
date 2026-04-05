@@ -37,7 +37,7 @@
     loadError = '';
     const token = localStorage.getItem('access_token');
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/buildings/', {
+      const res = await fetch('/api/v1/buildings/', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -58,7 +58,7 @@
     formError = '';
     const token = localStorage.getItem('access_token');
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/buildings/', {
+      const res = await fetch('/api/v1/buildings/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({
