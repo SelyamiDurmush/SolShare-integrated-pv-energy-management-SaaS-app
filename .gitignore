@@ -1,18 +1,17 @@
-# Ignore node_modules and env files
-node_modules/
-.env
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-venv/
-.pytest_cache/
-
-# SvelteKit
-.svelte-kit/
-build/
-dist/
-
-#pdf
+# Global Project Ignores
 *.pdf
+
+# Editor / IDE
+.vscode/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Root Virtual Environment
+.venv/
