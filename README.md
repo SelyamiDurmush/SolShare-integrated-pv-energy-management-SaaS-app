@@ -62,7 +62,7 @@ npm install
 # Start the development server
 npm run dev
 ```
-The client application will be instantly accessible at `http://localhost:5173`.
+The client application will be instantly accessible at `http://localhost:5173/login`.
 
 ---
 
