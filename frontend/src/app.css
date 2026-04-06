@@ -1,16 +1,31 @@
 @import "tailwindcss";
 
-/* Allow manual dark mode toggling via .dark class */
-@variant dark (&:where(.dark, .dark *));
-
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Allow manual dark mode toggling via .dark class */
+@variant dark (&:where(.dark, .dark *));
+
+/* Base styles for the app and dark mode */
 @layer base {
   body {
     @apply bg-gray-50 text-gray-900 dark:bg-black dark:text-gray-100 antialiased transition-colors duration-300;
   }
 }
 
+/* Deep Tonal Blue (Background image with overlay) */
+.solshare-login-wrapper {
+  background-image:
+    /* This creates the tonal blue overlay and the central focus vignetting */
+    radial-gradient(circle at center, transparent 30%, rgba(3, 15, 30, 0.9) 100%),
+    /* This applies a uniform dark overlay */
+    linear-gradient(rgba(0, 5, 20, 0.8), rgba(0, 5, 20, 0.8)),
+    /* Path to your selected (modified/darkened) image from those provided */
+    url('/dark-background-image.jpeg');
 
+  background-size: cover;
+  background-position: center;
+  /* Option for a soft blur around the edge */
+  backdrop-filter: blur(2px);
+}
