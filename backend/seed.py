@@ -11,6 +11,7 @@ from app.core.security import get_password_hash
 from app.models.user import User, UserRole
 from app.models.building import Building, Apartment, AllocationMethod
 from app.models.energy import Meter, MeterReading, MeterType
+from app.core.config import settings
 
 def seed_data():
     # Ensure all tables exist
@@ -18,15 +19,25 @@ def seed_data():
 
     db = SessionLocal()
 
-    # Only seed if no Property Manager exists yet (admin is created by lifespan)
     if db.query(User).filter(User.role == UserRole.PROPERTY_MANAGER).first():
         print("Seed data already present (Property Manager found). Skipping.")
         db.close()
         return
 
-    print("Seeding property manager and residents...")
+    print("Seeding admin, property manager and residents...")
 
-    # 1. Property Manager
+    # 1. Admin User
+    admin = User(
+        email=settings.ADMIN_EMAIL,
+        hashed_password=get_password_hash(settings.ADMIN_PASSWORD),
+        full_name=settings.ADMIN_FULL_NAME,
+        role=UserRole.ADMIN
+    )
+    db.add(admin)
+    db.commit()
+    db.refresh(admin)
+
+    # 2. Property Manager
     manager = User(
         email="manager@solshare.com",
         hashed_password=get_password_hash("manager123"),
@@ -108,11 +119,11 @@ def seed_data():
         db.refresh(meter)
         apt_meters.append(meter)
 
-    print("Generating 7 days of 15-minute interval readings (this may take a moment)...")
+    print("Generating 30 days of 15-minute interval readings (this may take a moment)...")
 
-    # 6. Generate readings for last 7 days at 15-min intervals
+    # 6. Generate readings for last 30 days at 15-min intervals
     end_time = datetime.utcnow()
-    start_time = end_time - timedelta(days=7)
+    start_time = end_time - timedelta(days=30)
     current_time = start_time
     readings = []
 
@@ -172,7 +183,8 @@ def seed_data():
     db.close()
     print("Seeding complete!")
     print("\nSeeded accounts:")
-    print(f"  Property Manager : manager@solshare.com  / manager123")
+    print(f"Admin User      : {settings.ADMIN_EMAIL} / {settings.ADMIN_PASSWORD}")
+    print(f"Property Manager: manager@solshare.com  / manager123")
     for i, name in enumerate(resident_names, start=1):
         print(f"  Resident {i}       : resident{i}@solshare.com / resident123  ({name})")
 

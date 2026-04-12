@@ -1,7 +1,8 @@
-from sqlalchemy import Boolean, Column, Integer, String, Enum
+from sqlalchemy import Boolean, Column, Integer, String, Enum, DateTime
 from sqlalchemy.orm import relationship
 import enum
 from app.core.database import Base
+from datetime import datetime
 
 class UserRole(str, enum.Enum):
     ADMIN = "admin"
@@ -17,6 +18,8 @@ class User(Base):
     full_name = Column(String)
     role = Column(Enum(UserRole), default=UserRole.RESIDENT)
     is_active = Column(Boolean, default=True)
+    reset_token = Column(String, unique=True, index=True, nullable=True)
+    reset_token_expires = Column(DateTime, nullable=True)
 
     # Relationships
     managed_buildings = relationship("Building", back_populates="manager")

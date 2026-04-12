@@ -1,6 +1,5 @@
 <script lang="ts">
   import { Sun, LogIn, Mail, Lock, CircleAlert } from "lucide-svelte";
-  import Button from "$lib/components/ui/Button.svelte";
   import { goto } from "$app/navigation";
 
   let email = $state("");
@@ -17,6 +16,7 @@
       const formData = new URLSearchParams();
       formData.append("username", email);
       formData.append("password", password);
+      // This is a simple login form that will be used to log in to the application
 
       const response = await fetch("/api/v1/auth/token", {
         method: "POST",
@@ -46,7 +46,6 @@
   <div
     class="w-full max-w-md p-8 rounded-2xl border border-gray-800 bg-gray-900/60 backdrop-blur-xl shadow-2xl"
   >
-    ``
     <div class="flex flex-col items-center mb-8">
       <div class="p-3 bg-blue-500/10 rounded-full mb-4 ring-1 ring-blue-500/30">
         <Sun class="text-blue-500 w-10 h-10" />
@@ -101,7 +100,7 @@
           <span>Remember me</span>
         </label>
         <a
-          href="/login/forgot"
+          href="/login/forgot-password"
           class="text-sm text-blue-400 hover:text-blue-300">Forgot password?</a
         >
       </div>

@@ -22,7 +22,6 @@ class AlertCategory(str, enum.Enum):
     MAINTENANCE = "maintenance"
     POSITIVE_RECORD = "positive_record"
 
-
 class Alert(Base):
     __tablename__ = "alerts"
 
