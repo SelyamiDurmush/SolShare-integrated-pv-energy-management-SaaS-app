@@ -1,4 +1,4 @@
-# ☀️ SolShare: Integrated Energy Management & Billing SaaS
+# ☀️ SolShare: Integrated Energy Management & Billing, Trading SaaS
 
 [![Python](https://img.shields.io/badge/Python-3.9+-yellow?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
@@ -11,31 +11,45 @@
 
 ## 🚀 Quick Start (Local Setup)
 
-The fastest way to run SolShare locally without Docker:
+The fastest way to run SolShare locally without Docker: You will need to start both the backend and frontend in separate terminal windows.
 
 ### 1. Backend (FastAPI)
 ```bash
+# Navigate to the backend directory
 cd backend
+
+# Create and activate the virtual environment
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+.venv\Scripts\activate       # On Windows
+# source .venv/bin/activate  # On Linux/Mac
+
+# Install dependencies
 pip install -r requirements.txt
 
-# Setup Env & Seed DB
-copy .env.example .env     # Linux/Mac: cp .env.example .env
+# Setup Environment Variables
+copy .env.example .env       # On Windows
+# cp .env.example .env       # On Linux/Mac
+
+# Seed the Database with initial dummy data
 python seed.py
 
-# Start API
-uvicorn app.main:app --reload
+# Start the API Server
+uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 *API: `http://127.0.0.1:8000` | Docs: `http://127.0.0.1:8000/docs`*
 
 ### 2. Frontend (SvelteKit)
 ```bash
+# Navigate to the frontend directory
 cd frontend
+
+# Install Node dependencies
 npm install
+
+# Start the development server
 npm run dev
 ```
-*App: `http://localhost:5173`*
+*App: `http://localhost:5173/login`*
 
 ---
 
@@ -88,4 +102,4 @@ docker-compose up --build
 - `nginx/`: Production reverse proxy configuration.
 
 ---
-*Developed by Selyami Durmus - [SolShare PoC](https://github.com/SelyamiDurmush/SolShare-integrated-pv-energy-management-SaaS-app)*
+*Developed by Selyami Durmush - [SolShare PoC](https://github.com/SelyamiDurmush/SolShare-integrated-pv-energy-management-SaaS-app)*
