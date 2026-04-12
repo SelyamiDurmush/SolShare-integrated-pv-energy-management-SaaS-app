@@ -13,6 +13,8 @@ def calculate_billing(building_id: int, month: int, year: int, db: Session):
     for apartment in building.apartments:
         total_consumption = 350.0 
         allocated_solar = 0.0
+        solar_rate = 0.10 
+        grid_rate = 0.35  
         
         if apartment.allocation_method == AllocationMethod.STATIC:
             share = (apartment.static_allocation_percentage or 0) / 100.0
@@ -24,9 +26,6 @@ def calculate_billing(building_id: int, month: int, year: int, db: Session):
 
         allocated_solar = min(allocated_solar, total_consumption)
         residual_grid = total_consumption - allocated_solar
-
-        solar_rate = 0.10 
-        grid_rate = 0.35  
         
         total_cost = (allocated_solar * solar_rate) + (residual_grid * grid_rate)
 

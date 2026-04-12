@@ -1,114 +1,91 @@
-# SolShare Energy Management Application (PoC)
+# ☀️ SolShare: Integrated Energy Management & Billing SaaS
 
-Developing a full-stack SaaS platform that enables multi-tenant buildings to fairly distribute rooftop solar (PV) energy, track real-time usage, and automate transparent billing for individual apartments and process online payment.
+[![Python](https://img.shields.io/badge/Python-3.9+-yellow?logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-5.0-ff3e00?logo=svelte&logoColor=white)](https://kit.svelte.dev/)
+[![SQLite](https://img.shields.io/badge/SQLite-3.0-003b57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 
-## 🚀 Technology Stack
-
-- **Frontend**: SvelteKit 5 (Runes), Tailwind CSS, Chart.js, Lucide Icons
-- **Backend**: FastAPI (Python), SQLAlchemy, SQLite (default)
-- **Architecture**: Decoupled Client-Server architecture with REST API
+**SolShare** is a full-stack SaaS platform designed for multi-tenant residential and commercial buildings. It enables fair distribution and trading of rooftop solar (PV) energy, real-time usage tracking, and automated, transparent billing and payment.
 
 ---
 
-## 💻 Local Development Setup
+## 🚀 Quick Start (Local Setup)
 
-Follow these steps to get the SolShare project running on your local machine.
+The fastest way to run SolShare locally without Docker:
 
-### 1. Backend Setup (FastAPI)
-
-The backend runs on Python and provides all the REST APIs and database modeling. It uses a local SQLite database by default (`solshare.db`), so no external database server is required.
-
-Make sure you have **Python 3.9+** installed.
-
+### 1. Backend (FastAPI)
 ```bash
-# Navigate to the backend directory
 cd backend
-
-# Create a virtual environment (recommended)
 python -m venv .venv
-
-# Activate the virtual environment
-# On Windows:
-.venv\Scripts\activate
-# On macOS/Linux:
-source .venv/bin/activate
-
-# Install the Python dependencies
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
-# Seed the database with demo values
-# This creates the tables and inserts a property manager, 5 residents, and 30 days of simulated energy readings.
+# Setup Env & Seed DB
+copy .env.example .env     # Linux/Mac: cp .env.example .env
 python seed.py
 
-# Run the development server
-uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+# Start API
+uvicorn app.main:app --reload
 ```
-The API will run at `http://127.0.0.1:8000`. 
-*Tip: You can view the automatically generated interactive Swagger API documentation at `http://127.0.0.1:8000/docs`.*
+*API: `http://127.0.0.1:8000` | Docs: `http://127.0.0.1:8000/docs`*
 
-### 2. Frontend Setup (SvelteKit)
-
-The frontend is a SvelteKit application built with reactive Runes.
-
-Make sure you have **Node.js (v18+)** installed.
-
+### 2. Frontend (SvelteKit)
 ```bash
-# Open a new terminal and navigate to the frontend directory
 cd frontend
-
-# Install Node dependencies
 npm install
-
-# Start the development server
 npm run dev
 ```
-The client application will be instantly accessible at `http://localhost:5173/login`.
+*App: `http://localhost:5173`*
 
 ---
 
-## 🔑 Default Test Accounts (After Seeding)
+## 💻 Technology Stack
 
-Once you've run the `seed.py` script on the backend, the following default accounts are available to test the Role-Based Access Control (RBAC):
+### **Frontend**
+- **Framework**: SvelteKit 5 (Runes) for reactive, high-performance UI.
+- **Styling**: Tailwind CSS 4 for a modern, utility-first design system.
+- **Visualization**: Chart.js for real-time energy production and consumption graphs.
+- **Icons**: Lucide Svelte for accessible, clean iconography.
 
-**1. System Administrator**
-- **Email**: `admin@solshare.com`
-- **Password**: `admin123`
-- **Access**: Full global access to all buildings, system alerts, user management, and billing statements across the entire platform.
-
-**2. Property Manager**
-- **Email**: `manager@solshare.com`
-- **Password**: `manager123`
-- **Access**: Restricted to their assigned properties. Can manage apartments, view building-scoped alerts, and browse specialized billing.
-
-**3. Resident**
-- **Email**: `resident1@solshare.com` (available up to `resident5@solshare.com`)
-- **Password**: `resident123`
-- **Access**: Strictly restricted. Can only view energy usage, alerts, and billing statements associated with their personal apartment.
+### **Backend**
+- **Framework**: FastAPI (Python) for high-performance Async RESTful APIs.
+- **ORM/DB**: SQLAlchemy with SQLite for reliable data persistence and modeling.
+- **Security**: JWT (Jose) & Argon2 hashing for secure, role-based authentication.
+- **Validation**: Pydantic v2 for robust data schema enforcement.
 
 ---
 
-## 🏗️ Core Directory Structure
+## 🔑 Test Accounts (After Seeding)
 
-```text
-SolShare/
-├── backend/                 # Python/FastAPI Application
-│   ├── app/
-│   │   ├── api/v1/          # Route controllers (Billing, Analytics, Alerts, Users)
-│   │   ├── core/            # Configuration, JWT Security auth, Database session
-│   │   ├── models/          # SQLAlchemy Database Models (Buildings, Apartments, Users, Meters, Alerts)
-│   │   └── schemas/         # Pydantic data validation schemas
-│   ├── seed.py              # Generates dummy data and historical meter readings
-│   └── requirements.txt     # Python dependencies list
-└── frontend/                # Node/SvelteKit Application
-    ├── src/
-    │   ├── lib/             # UI Components (Cards, Buttons), Utils, Shared State Stores (e.g. user.svelte.ts)
-    │   └── routes/          # SvelteKit App pages
-    │       ├── (app)/       # Authenticated layout wrapper (Sidebar, Header)
-    │       │   ├── dashboard/ 
-    │       │   ├── buildings/ 
-    │       │   ├── billing/ 
-    │       │   └── alerts/  
-    │       └── login/       # Public unauthenticated route
-    ├── tailwind.config.ts   # Tailwind styling configurations
-    └── package.json         # Node.js dependencies list
+| Role | Email | Password | Access Level |
+| :--- | :--- | :--- | :--- |
+| **System Admin** | `admin@solshare.com` | `admin123` | Global management & system settings |
+| **Property Manager** | `manager@solshare.com` | `manager123` | Assigned properties & residents |
+| **Resident** | `resident1@solshare.com` | `resident123` | Personal usage and billing only |
+
+---
+
+## ✨ Key Features
+
+- **Energy Sovereignty**: Track real-time solar production vs. consumption.
+- **Fair Distribution**: Automated algorithms to distribute solar energy credits fairly.
+- **Role-Based Access (RBAC)**: Distinct dashboards for Admins, Managers, and Residents.
+- **Automated Billing**: Generates monthly statements based on actual meter readings.
+
+---
+
+## 🐳 Docker Setup (Optional)
+Launch the entire stack with one command:
+```bash
+docker-compose up --build
 ```
+
+---
+
+## 📂 Architecture
+- `backend/`: FastAPI Application, Models, and DB Migration Logic.
+- `frontend/`: SvelteKit Application, UI Components, and Reactive State.
+- `nginx/`: Production reverse proxy configuration.
+
+---
+*Developed by Selyami Durmus - [SolShare PoC](https://github.com/SelyamiDurmush/SolShare-integrated-pv-energy-management-SaaS-app)*

@@ -3,14 +3,14 @@ version: '3.8'
 services:
   backend:
     build: ./backend
-    # We remove 'ports' because Nginx will talk to it internally on 8000
+    #'ports' removed because Nginx will talk to it internally on 8000
     volumes:
       - sqlite_data:/app
     restart: always
 
   frontend:
     build: ./frontend
-    # We remove 'ports' because Nginx will talk to it internally on 5173
+    #'ports' removed because Nginx will talk to it internally on 5173
     environment:
       - BACKEND_URL=http://backend:8000
     restart: always

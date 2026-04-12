@@ -15,3 +15,18 @@ Thumbs.db
 
 # Root Virtual Environment
 .venv/
+
+# Secrets and Local databases
+.env
+*.db
+backend/solshare.db
+frontend/.env
+frontend/.env.*
+!.env.example
+!backend/.env.example
+!frontend/.env.example
+
+# Common ignores
+node_modules/
+__pycache__/
+.DS_Store

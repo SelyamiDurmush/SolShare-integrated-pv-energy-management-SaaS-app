@@ -7,7 +7,8 @@ from app.models.user import User, UserRole
 from app.core.security import get_password_hash
 from app.core.config import settings
 
-@asynccontextmanager
+@asynccontextmanager # This is used to manage the lifespan of the application 
+# It is used to create the database tables and initialize the admin user 
 async def lifespan(app: FastAPI):
     # Ensure tables exist
     Base.metadata.create_all(bind=engine)
@@ -31,14 +32,16 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="SolShare Energy System", lifespan=lifespan)
 
+# Add CORS middleware to allow frontend to communicate with backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=[settings.FRONTEND_URL], 
+    allow_credentials=True, 
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Include routers for API endpoints 
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(users.router, prefix="/api/v1")
 app.include_router(buildings.router, prefix="/api/v1")
