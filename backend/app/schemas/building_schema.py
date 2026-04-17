@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 from app.models.building import AllocationMethod
 
@@ -15,8 +15,7 @@ class Apartment(ApartmentBase):
     building_id: int
     resident_id: Optional[int] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class BuildingBase(BaseModel):
     name: str  # Required
@@ -31,5 +30,4 @@ class Building(BuildingBase):
     manager_id: int
     apartments: List[Apartment] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

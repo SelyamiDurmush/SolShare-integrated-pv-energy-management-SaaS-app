@@ -30,3 +30,9 @@ frontend/.env.*
 node_modules/
 __pycache__/
 .DS_Store
+
+# Testing
+/frontend/test-results/
+/frontend/playwright-report/
+/frontend/blob-report/
+backend/test.db
