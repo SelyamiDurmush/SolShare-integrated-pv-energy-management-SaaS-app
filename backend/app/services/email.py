@@ -3,8 +3,7 @@ from email.message import EmailMessage
 from app.core.config import settings
 
 def send_password_reset_email(to_email: str, token: str, full_name: str):
-
-
+    
     if not settings.SMTP_HOST or not settings.SMTP_USERNAME:
         print("WARNING: Email credentials not set. Token is:", token)
         return

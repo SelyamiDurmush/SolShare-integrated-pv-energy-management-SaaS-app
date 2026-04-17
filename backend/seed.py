@@ -41,7 +41,7 @@ def seed_data():
     manager = User(
         email="manager@solshare.com",
         hashed_password=get_password_hash("manager123"),
-        full_name="Selyami Durmush",
+        full_name="Property Manager",
         role=UserRole.PROPERTY_MANAGER
     )
     db.add(manager)
@@ -49,7 +49,7 @@ def seed_data():
     db.refresh(manager)
 
     # 2. Residents
-    resident_names = ["Christoph Bimmermann", "Lukas Weber", "Marie Müller", "Tom Fischer", "Sara Klein"]
+    resident_names = ["Stefan Schmidt", "Lukas Weber", "Marie Müller", "Tom Fischer", "Sara Klein"]
     residents = []
     for i, name in enumerate(resident_names, start=1):
         resident = User(
