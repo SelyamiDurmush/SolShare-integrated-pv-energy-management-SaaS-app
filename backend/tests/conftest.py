@@ -25,12 +25,22 @@ def db_engine():
 @pytest.fixture(scope="function")
 def db(db_engine):
     connection = db_engine.connect()
+    # Begin a non-ORM transaction
     transaction = connection.begin()
+    # Establish a session bound to the connection
     session = TestingSessionLocal(bind=connection)
     
+    # 🌟 NEW: Create a savepoint for nested transactions
+    nested = connection.begin_nested()
+
+    @pytest.fixture
+    def _db_session():
+        yield session
+
     yield session
     
     session.close()
+    # Roll back everything to ensure a clean slate for the next test
     transaction.rollback()
     connection.close()
 
@@ -57,7 +67,7 @@ def admin_user(db):
             role=UserRole.ADMIN
         )
         db.add(user)
-        db.commit()
+        db.flush() # 🌟 Use flush instead of commit
     return user
 
 @pytest.fixture
@@ -71,7 +81,7 @@ def resident_user(db):
             role=UserRole.RESIDENT
         )
         db.add(user)
-        db.commit()
+        db.flush() # 🌟 Use flush instead of commit
     return user
 
 @pytest.fixture
