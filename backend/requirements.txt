@@ -8,3 +8,6 @@ passlib[argon2]
 python-jose[cryptography]
 python-multipart
 pvlib
+pytest
+pytest-cov
+httpx
