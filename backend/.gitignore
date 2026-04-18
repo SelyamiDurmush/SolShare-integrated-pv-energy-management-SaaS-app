@@ -11,3 +11,7 @@ env/
 
 # Backend Environment Variables
 .env
+
+# Local Database
+*.db
+*.sqlite3

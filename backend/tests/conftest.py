@@ -47,9 +47,37 @@ def client(db):
     del app.dependency_overrides[get_db]
 
 @pytest.fixture
-def admin_token():
-    return create_access_token(data={"sub": "admin@solshare.com"}, expires_delta=timedelta(minutes=30))
+def admin_user(db):
+    user = db.query(User).filter(User.email == "admin@solshare.com").first()
+    if not user:
+        user = User(
+            email="admin@solshare.com",
+            hashed_password=get_password_hash("admin1234"),
+            full_name="Test Admin",
+            role=UserRole.ADMIN
+        )
+        db.add(user)
+        db.commit()
+    return user
 
 @pytest.fixture
-def resident_token():
-    return create_access_token(data={"sub": "resident1@solshare.com"}, expires_delta=timedelta(minutes=30))
+def resident_user(db):
+    user = db.query(User).filter(User.email == "resident1@solshare.com").first()
+    if not user:
+        user = User(
+            email="resident1@solshare.com",
+            hashed_password=get_password_hash("resident123"),
+            full_name="Test Resident",
+            role=UserRole.RESIDENT
+        )
+        db.add(user)
+        db.commit()
+    return user
+
+@pytest.fixture
+def admin_token(admin_user):
+    return create_access_token(data={"sub": admin_user.email}, expires_delta=timedelta(minutes=30))
+
+@pytest.fixture
+def resident_token(resident_user):
+    return create_access_token(data={"sub": resident_user.email}, expires_delta=timedelta(minutes=30))

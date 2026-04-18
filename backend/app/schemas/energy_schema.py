@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, List
 from datetime import datetime
 from app.models.energy import MeterType
@@ -15,13 +15,12 @@ class Meter(MeterBase):
     id: int
     building_id: int
     apartment_id: Optional[int] = None
-
     model_config = ConfigDict(from_attributes=True)
 
 class MeterReadingCreate(BaseModel):
     meter_id: int
     time: datetime
-    value_kwh: float
+    value_kwh: float = Field(ge=0)
 
 class MeterReading(MeterReadingCreate):
     model_config = ConfigDict(from_attributes=True)

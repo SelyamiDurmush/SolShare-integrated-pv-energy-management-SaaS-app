@@ -81,7 +81,21 @@ def get_energy_overview(
                 "consumption": consumption,
             })
 
-    return {"period": period, "data": data}
+    total_prod = sum(d["production"] for d in data)
+    total_cons = sum(d["consumption"] for d in data)
+    self_sufficiency = 0
+    if total_cons > 0:
+        self_sufficiency = min(100, round((total_prod / total_cons) * 100))
+
+    return {
+        "period": period, 
+        "data": data,
+        "summary": {
+            "total_production": round(total_prod, 2),
+            "total_consumption": round(total_cons, 2),
+            "self_sufficiency": self_sufficiency
+        }
+    }
 
 
 @router.get("/apartment-usage")
