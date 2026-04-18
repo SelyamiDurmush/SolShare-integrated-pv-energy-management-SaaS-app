@@ -6,7 +6,7 @@ test.describe('Authentication Flow', () => {
 		await page.goto('/login', { waitUntil: 'domcontentloaded' });
 		
 		console.log("Waiting for hydration...");
-		await page.waitForTimeout(1000); // Wait for Svelte JS to hydrate
+		await page.waitForTimeout(2000); // Wait for Svelte JS to hydrate
 		
 		console.log("Waiting for email input...");
 		await page.waitForSelector('input[type="email"]');
@@ -18,14 +18,17 @@ test.describe('Authentication Flow', () => {
 		console.log("Clicking Sign In...");
 		await page.getByRole('button', { name: /sign in/i }).click();
 
-		console.log("Waiting for dashboard to load...");
-		await expect(page.locator('h1', { hasText: 'Dashboard' })).toBeVisible({ timeout: 15000 });
-		await expect(page.locator('h2', { hasText: 'Energy Overview' })).toBeVisible();
+		console.log("Waiting for dashboard redirect...");
+		await page.waitForURL('**/dashboard', { timeout: 15000 });
+		
+		await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible();
+		await expect(page.getByRole('heading', { name: /energy overview/i })).toBeVisible();
 		console.log("Login successful!");
 	});
 
 	test('shows error with wrong credentials', async ({ page }) => {
 		await page.goto('/login', { waitUntil: 'domcontentloaded' });
+		await page.waitForTimeout(2000);
 		await page.waitForSelector('input[type="email"]');
 
 		await page.fill('input[type="email"]', 'wrong@email.com');
@@ -37,4 +40,3 @@ test.describe('Authentication Flow', () => {
 		expect(page.url()).toContain('/login');
 	});
 });
-
