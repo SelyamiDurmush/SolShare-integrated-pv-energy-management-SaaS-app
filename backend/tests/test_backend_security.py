@@ -4,13 +4,19 @@ from jose import jwt
 from app.core.config import settings
 from app.models.user import User, UserRole
 from app.models.energy import Meter, MeterReading, MeterType
-from app.models.building import Apartment
+from app.models.building import Building, Apartment
 
 def test_schema_rejects_negative_energy(client, admin_token, db):
-    # Setup: Need a meter to exist to get past the 404 check
-    meter = Meter(serial_number="STRESS_001", type=MeterType.APARTMENT, building_id=1)
+    # Setup: Create a building first so the foreign key is valid
+    building = Building(name="Test Building", address="123 Test St", grid_connection_capacity_kw=100.0)
+    db.add(building)
+    db.commit()
+    db.refresh(building)
+
+    meter = Meter(serial_number="STRESS_001", type=MeterType.APARTMENT, building_id=building.id)
     db.add(meter)
     db.commit()
+    db.refresh(meter)
 
     # Stress Test: Reject negative consumption
     bad_reading = {
@@ -28,16 +34,21 @@ def test_schema_rejects_negative_energy(client, admin_token, db):
 def test_data_isolation_residents_energy(client, db, resident_token):
     # Isolation: Resident 1 should not see Resident 2's meter data
     
-    # 1. Create Resident 2 and their Apartment/Meter
+    # 1. Create Building and Resident 2 
+    building = Building(name="Test Building", address="123 Test St", grid_connection_capacity_kw=100.0)
+    db.add(building)
+    db.commit()
+    db.refresh(building)
+
     res_2 = User(email="resident2@solshare.com", hashed_password="...", role=UserRole.RESIDENT, full_name="Resident 2")
     db.add(res_2)
     db.commit()
     
-    apt_2 = Apartment(unit_number="102", building_id=1, resident_id=res_2.id)
+    apt_2 = Apartment(unit_number="102", building_id=building.id, resident_id=res_2.id)
     db.add(apt_2)
     db.commit()
     
-    meter_2 = Meter(serial_number="MTR_RES_2", type=MeterType.APARTMENT, building_id=1, apartment_id=apt_2.id)
+    meter_2 = Meter(serial_number="MTR_RES_2", type=MeterType.APARTMENT, building_id=building.id, apartment_id=apt_2.id)
     db.add(meter_2)
     db.commit()
     
@@ -51,9 +62,14 @@ def test_energy_math_self_sufficiency(client, db, admin_token):
     # Math: Verify 50kWh Prod / 100kWh Cons = 50% Self Sufficiency
     # Note: We use Admin token to bypass owner checks for building-wide analytics
     
-    # 1. Setup mock meters for Building 1
-    meter_pv = Meter(serial_number="PV_MOCK", type=MeterType.PV_PRODUCTION, building_id=1)
-    meter_apt = Meter(serial_number="APT_MOCK", type=MeterType.APARTMENT, building_id=1)
+    # 1. Setup mock Building and meters
+    building = Building(name="Math Building", address="Math St", grid_connection_capacity_kw=100.0)
+    db.add(building)
+    db.commit()
+    db.refresh(building)
+
+    meter_pv = Meter(serial_number="PV_MOCK", type=MeterType.PV_PRODUCTION, building_id=building.id)
+    meter_apt = Meter(serial_number="APT_MOCK", type=MeterType.APARTMENT, building_id=building.id)
     db.add(meter_pv)
     db.add(meter_apt)
     db.commit()
