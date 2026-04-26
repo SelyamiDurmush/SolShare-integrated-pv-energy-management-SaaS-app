@@ -13,18 +13,7 @@ from app.api.deps import get_current_user
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 
 
-def _sum_readings(db: Session, meter_type: MeterType, start: datetime, end: datetime, building_id: Optional[int] = None) -> float:
-    query = (
-        db.query(func.sum(MeterReading.value_kwh))
-        .join(Meter, Meter.id == MeterReading.meter_id)
-        .filter(Meter.type == meter_type)
-        .filter(MeterReading.time >= start)
-        .filter(MeterReading.time <= end)
-    )
-    if building_id:
-        query = query.filter(Meter.building_id == building_id)
-    result = query.scalar()
-    return round(result or 0.0, 2)
+from app.services.energy import EnergyService
 
 
 @router.get("/energy-overview")
@@ -47,8 +36,8 @@ def get_energy_overview(
         for h in range(23, -1, -1):
             bucket_start = now.replace(minute=0, second=0, microsecond=0) - timedelta(hours=h)
             bucket_end = bucket_start + timedelta(hours=1)
-            production = _sum_readings(db, MeterType.PV_PRODUCTION, bucket_start, bucket_end)
-            consumption = _sum_readings(db, MeterType.APARTMENT, bucket_start, bucket_end)
+            production = EnergyService.sum_readings(db, MeterType.PV_PRODUCTION, bucket_start, bucket_end)
+            consumption = EnergyService.sum_readings(db, MeterType.APARTMENT, bucket_start, bucket_end)
             data.append({
                 "label": bucket_start.strftime("%H:%M"),
                 "production": production,
@@ -60,8 +49,8 @@ def get_energy_overview(
         for d in range(6, -1, -1):
             bucket_start = (now - timedelta(days=d)).replace(hour=0, minute=0, second=0, microsecond=0)
             bucket_end = bucket_start + timedelta(days=1)
-            production = _sum_readings(db, MeterType.PV_PRODUCTION, bucket_start, bucket_end)
-            consumption = _sum_readings(db, MeterType.APARTMENT, bucket_start, bucket_end)
+            production = EnergyService.sum_readings(db, MeterType.PV_PRODUCTION, bucket_start, bucket_end)
+            consumption = EnergyService.sum_readings(db, MeterType.APARTMENT, bucket_start, bucket_end)
             data.append({
                 "label": bucket_start.strftime("%a %d"),
                 "production": production,
@@ -73,8 +62,8 @@ def get_energy_overview(
         for d in range(29, -1, -1):
             bucket_start = (now - timedelta(days=d)).replace(hour=0, minute=0, second=0, microsecond=0)
             bucket_end = bucket_start + timedelta(days=1)
-            production = _sum_readings(db, MeterType.PV_PRODUCTION, bucket_start, bucket_end)
-            consumption = _sum_readings(db, MeterType.APARTMENT, bucket_start, bucket_end)
+            production = EnergyService.sum_readings(db, MeterType.PV_PRODUCTION, bucket_start, bucket_end)
+            consumption = EnergyService.sum_readings(db, MeterType.APARTMENT, bucket_start, bucket_end)
             data.append({
                 "label": bucket_start.strftime("%b %d"),
                 "production": production,
@@ -117,7 +106,7 @@ def get_apartment_usage(
         # Get apartment meter consumption
         consumption = 0.0
         if apt.meter:
-            consumption = _sum_readings(
+            consumption = EnergyService.sum_readings(
                 db, MeterType.APARTMENT, week_ago, now
             )
             # More precisely, sum for this specific meter
@@ -134,8 +123,8 @@ def get_apartment_usage(
         total_pv = 0.0
         total_consumption_building = 0.0
         if building:
-            total_pv = _sum_readings(db, MeterType.PV_PRODUCTION, week_ago, now, building.id)
-            total_consumption_building = _sum_readings(db, MeterType.APARTMENT, week_ago, now, building.id)
+            total_pv = EnergyService.sum_readings(db, MeterType.PV_PRODUCTION, week_ago, now, building.id)
+            total_consumption_building = EnergyService.sum_readings(db, MeterType.APARTMENT, week_ago, now, building.id)
 
         # Proportional solar share
         solar_share = 0.0
