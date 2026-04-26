@@ -20,11 +20,12 @@ engine = create_engine(
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+# .fixture is a function that returns a value that can be used by other tests
 @pytest.fixture(scope="function")
 def db():
     # Create the tables in the in-memory database
-    Base.metadata.create_all(bind=engine)
-    session = TestingSessionLocal()
+    Base.metadata.create_all(bind=engine) # creates all tables in the database
+    session = TestingSessionLocal() # creates a new session for each test
     try:
         yield session
     finally:
@@ -49,7 +50,7 @@ def admin_user(db):
     user = User(
         email="admin@solshare.com",
         hashed_password=get_password_hash("admin1234"),
-        full_name="Test Admin",
+        full_name="System Administrator",
         role=UserRole.ADMIN
     )
     db.add(user)

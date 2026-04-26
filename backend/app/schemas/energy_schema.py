@@ -3,6 +3,8 @@ from typing import Optional, List
 from datetime import datetime
 from app.models.energy import MeterType
 
+# .Base is a class that is used to define the base class for all models
+
 class MeterBase(BaseModel):
     serial_number: str
     type: MeterType
