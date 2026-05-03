@@ -75,13 +75,7 @@ class AlertsService:
                     apartment_id=meter.apartment_id,
                     meter_id=meter.id,
                 )
-            else:
-                # Auto-resolve if meter is back
-                db.query(Alert).filter(
-                    Alert.category == AlertCategory.METER_OFFLINE,
-                    Alert.meter_id == meter.id,
-                    Alert.is_resolved == False,
-                ).update({"is_resolved": True, "resolved_at": now})
+            # No auto-resolve: respect manual user decisions on alert status
 
         # ── 2. Abnormal consumption: >40% above 7-day average ────────────────────
         one_day_ago = now - timedelta(hours=24)
@@ -156,12 +150,7 @@ class AlertsService:
                     ),
                     building_id=building.id,
                 )
-            else:
-                db.query(Alert).filter(
-                    Alert.category == AlertCategory.GRID_OVERLOAD,
-                    Alert.building_id == building.id,
-                    Alert.is_resolved == False,
-                ).update({"is_resolved": True, "resolved_at": now})
+            # No auto-resolve: respect manual user decisions on alert status
 
         # ── 4. PV underperformance: production < 60% of capacity estimate ─────────
         for building in db.query(Building).all():

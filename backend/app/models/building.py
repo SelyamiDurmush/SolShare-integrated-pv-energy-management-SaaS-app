@@ -21,6 +21,7 @@ class Building(Base):
     manager = relationship("User", back_populates="managed_buildings")
     apartments = relationship("Apartment", back_populates="building")
     meters = relationship("Meter", back_populates="building")
+    battery_system = relationship("BatterySystem", back_populates="building", uselist=False)
 
 class Apartment(Base):
     __tablename__ = "apartments"

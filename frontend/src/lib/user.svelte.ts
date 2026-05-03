@@ -4,6 +4,7 @@ export const userState = $state({
 
 export const alertState = $state({
     unreadCount: 0,
+    activeCount: 0,
 
     async refresh() {
         const token = localStorage.getItem('access_token');
@@ -15,6 +16,7 @@ export const alertState = $state({
             if (res.ok) {
                 const data = await res.json();
                 this.unreadCount = data.filter((a: any) => !a.is_read).length;
+                this.activeCount = data.length; // all returned are unresolved
             }
         } catch { /* silent */ }
     }
