@@ -181,7 +181,7 @@ def seed_data():
         db.commit()
 
     db.close()
-    print("Seeding complete!")
+    print("Successfully Seeding complete!")
     print("\nSeeded accounts:")
     print(f"Admin User      : {settings.ADMIN_EMAIL} / {settings.ADMIN_PASSWORD}")
     print(f"Property Manager: manager@solshare.com  / manager123")

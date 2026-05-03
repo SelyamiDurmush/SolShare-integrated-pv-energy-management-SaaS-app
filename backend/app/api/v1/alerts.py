@@ -1,6 +1,5 @@
 """
 System Alerts — Phase 1 (DB Polling)
-
 Detection runs on-demand when the GET /alerts endpoint is called.
 New unique alerts are upserted  (deduped by category + scope key).
 RBAC:
@@ -10,7 +9,7 @@ RBAC:
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, or_, and_, case
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -48,14 +47,29 @@ def get_alerts(
 
     if current_user.role == UserRole.RESIDENT:
         # Find apartments belonging to this resident
-        resident_apt_ids = [
-            apt.id for apt in db.query(Apartment).filter(Apartment.resident_id == current_user.id).all()
-        ]
-        if not resident_apt_ids:
+        resident_apts = db.query(Apartment).filter(Apartment.resident_id == current_user.id).all()
+        if not resident_apts:
             return []
-        query = query.filter(Alert.apartment_id.in_(resident_apt_ids))
+        
+        resident_apt_ids = [apt.id for apt in resident_apts]
+        building_ids = list(set(apt.building_id for apt in resident_apts))
+        
+        query = query.filter(
+            or_(
+                Alert.apartment_id.in_(resident_apt_ids),
+                and_(Alert.apartment_id == None, Alert.building_id.in_(building_ids))
+            )
+        )
 
-    alerts = query.order_by(Alert.created_at.desc()).limit(50).all()
+    severity_order = case(
+        (Alert.severity == AlertSeverity.CRITICAL, 1),
+        (Alert.severity == AlertSeverity.WARNING, 2),
+        (Alert.severity == AlertSeverity.INFO, 3),
+        (Alert.severity == AlertSeverity.POSITIVE, 4),
+        else_=5
+    )
+
+    alerts = query.order_by(severity_order, Alert.created_at.desc()).limit(50).all()
 
     def _serialize(a: Alert):
         return {
@@ -102,5 +116,22 @@ def resolve_alert(
     if alert:
         alert.is_resolved = True
         alert.resolved_at = datetime.utcnow()
+        db.commit()
+    return {"ok": True}
+
+
+@router.patch("/{alert_id}/unresolve")
+def unresolve_alert(
+    alert_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.role == UserRole.RESIDENT:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=403, detail="Residents cannot unresolve alerts.")
+    alert = db.query(Alert).filter(Alert.id == alert_id).first()
+    if alert:
+        alert.is_resolved = False
+        alert.resolved_at = None
         db.commit()
     return {"ok": True}

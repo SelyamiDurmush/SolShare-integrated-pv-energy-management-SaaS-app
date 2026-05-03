@@ -13,3 +13,6 @@ if os.path.exists("solshare.db"):
 
 # 2. Run the seed script to recreate it with new data
 subprocess.run([sys.executable, "seed.py"])
+subprocess.run([sys.executable, "seed_battery.py"])
+subprocess.run([sys.executable, "seed_alerts.py"], env={**os.environ, "PYTHONIOENCODING": "utf-8"})
+

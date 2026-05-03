@@ -199,8 +199,10 @@
 
       <div class="flex items-center space-x-2 md:space-x-4">
         {#if backendStatus === "connected"}
-          <span class="hidden sm:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium tracking-tight">API CONNECTED</span>
-          <div class="sm:hidden w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="API Connected"></div>
+          <div class="flex items-center gap-2 bg-gray-100 dark:bg-gray-800/50 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700/50">
+            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="System Online"></div>
+            <span class="hidden sm:inline text-[10px] font-semibold text-gray-700 dark:text-gray-300 tracking-tight uppercase">System Online</span>
+          </div>
         {/if}
         <button onclick={toggleTheme} class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 dark:bg-gray-800/80 dark:hover:bg-gray-700 dark:text-gray-300 transition-colors shadow-sm">
           {#if isDarkMode}<Sun class="w-4 h-4 text-amber-500" />{:else}<Moon class="w-4 h-4 text-indigo-500" />{/if}
@@ -260,11 +262,12 @@
   >
     <div class="relative shrink-0">
       <Bell class="w-5 h-5" />
-      {#if alertState.unreadCount > 0}
+      {#if alertState.activeCount > 0}
         <span
-          class="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse"
+          class="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 text-white text-[9px] font-bold rounded-full flex items-center justify-center
+            {alertState.unreadCount > 0 ? 'bg-red-500 animate-pulse' : 'bg-amber-500'}"
         >
-          {alertState.unreadCount > 99 ? "99+" : alertState.unreadCount}
+          {alertState.activeCount > 99 ? "99+" : alertState.activeCount}
         </span>
       {/if}
     </div>

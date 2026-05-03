@@ -14,6 +14,7 @@ router = APIRouter(prefix="/analytics", tags=["analytics"])
 
 
 from app.services.energy import EnergyService
+from app.models.energy import BatterySystem, BatteryReading
 
 
 @router.get("/energy-overview")
@@ -144,3 +145,78 @@ def get_apartment_usage(
         })
 
     return result
+
+@router.get("/battery-status")
+def get_battery_status(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Returns the latest battery status for the building.
+    Covers all real-world BESS operating states.
+    """
+    battery = db.query(BatterySystem).first()
+    if not battery:
+        return {"status": "error", "message": "No battery system found"}
+
+    latest_reading = (
+        db.query(BatteryReading)
+        .filter(BatteryReading.battery_id == battery.id)
+        .order_by(BatteryReading.time.desc())
+        .first()
+    )
+
+    if not latest_reading:
+        return {"status": "error", "message": "No battery readings found"}
+
+    soc = latest_reading.soc_percentage
+    soh = latest_reading.soh_percentage
+    power = latest_reading.power_kw
+
+    # ── Determine status enum & label ──────────────────────────────────────
+    # Priority order: fault → critically_low → full → charging → discharging → idle
+    if soh < 60:
+        # Battery health severely degraded — needs replacement
+        status_enum = "fault"
+        status_text = "Fault — Battery Health Critical"
+    elif soc <= 5:
+        # Near-empty — emergency condition
+        status_enum = "critically_low"
+        status_text = "Critically Low — Emergency Reserve"
+    elif soc >= 99 and abs(power) <= 0.5:
+        # Battery topped-up, no significant power flow
+        status_enum = "full"
+        status_text = "Fully Charged — Standby"
+    elif power > 0.5:
+        # Positive power_kw = battery is absorbing energy (charging)
+        # Heuristic: if solar is available (daytime), assume solar source
+        from datetime import datetime
+        hour = datetime.utcnow().hour
+        if 6 <= hour <= 20:
+            status_enum = "charging"
+            status_text = "Charging from Solar"
+        else:
+            status_enum = "charging_grid"
+            status_text = "Charging from Grid"
+    elif power < -0.5:
+        # Negative power_kw = battery is supplying energy (discharging)
+        status_enum = "discharging"
+        status_text = "Discharging to Load"
+    else:
+        # Near-zero power flow
+        status_enum = "idle"
+        status_text = "Idle / Maintaining"
+
+    available_kwh = (soc / 100.0) * battery.capacity_kwh
+
+    return {
+        "soc_percentage": round(soc, 1),
+        "soh_percentage": round(soh, 1),
+        "power_kw": round(power, 1),
+        "estimated_backup_hours": round(latest_reading.estimated_backup_hours, 1),
+        "status_text": status_text,
+        "status_enum": status_enum,
+        "available_kwh": round(available_kwh, 1),
+        "capacity_kwh": battery.capacity_kwh,
+        "updated_at": latest_reading.time.isoformat()
+    }
