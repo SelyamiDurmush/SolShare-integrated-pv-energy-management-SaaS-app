@@ -926,7 +926,7 @@
                       : apt.apartment_id)}
               >
                 <td class="py-3 px-4 font-bold text-gray-900 dark:text-white"
-                  >#{apt.unit_number}</td
+                  >{apt.unit_number}</td
                 >
                 <td class="py-3 px-4 text-gray-600 dark:text-gray-300">
                   {#if apt.resident_name}{apt.resident_name}{:else}<span

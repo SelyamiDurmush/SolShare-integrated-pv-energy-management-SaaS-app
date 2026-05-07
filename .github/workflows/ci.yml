@@ -61,7 +61,7 @@ jobs:
         working-directory: ./frontend
         run: npx playwright install --with-deps
 
-      # Optional: If you had Vitest/Unit tests, they would run here
+      # Optional: If I had Vitest/Unit tests, they would run here
       # - name: Run Unit Tests
       #   working-directory: ./frontend
       #   run: npm run test:unit

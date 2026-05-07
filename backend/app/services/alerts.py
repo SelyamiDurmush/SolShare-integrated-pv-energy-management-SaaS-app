@@ -38,6 +38,23 @@ class AlertsService:
         if existing:
             return  # already open — don't duplicate
 
+        # If user recently resolved this exact alert, give a 24-hour grace period before reopening
+        grace_period = datetime.utcnow() - timedelta(hours=24)
+        recently_resolved = (
+            db.query(Alert)
+            .filter(
+                Alert.category == category,
+                Alert.is_resolved == True,
+                Alert.building_id == building_id,
+                Alert.apartment_id == apartment_id,
+                Alert.meter_id == meter_id,
+                Alert.resolved_at >= grace_period
+            )
+            .first()
+        )
+        if recently_resolved:
+            return  # in grace period
+
         alert = Alert(
             severity=severity,
             category=category,
@@ -54,8 +71,8 @@ class AlertsService:
         """Run all detection checks and upsert alerts into the DB."""
         now = datetime.utcnow()
 
-        # ── 1. Meter offline: no readings in last 2 hours ─────────────────────────
-        two_hours_ago = now - timedelta(hours=2)
+        # ── 1. Meter offline: no readings in last 12 hours ─────────────────────────
+        two_hours_ago = now - timedelta(hours=12)
         apt_meters = db.query(Meter).filter(Meter.type == MeterType.APARTMENT).all()
         for meter in apt_meters:
             latest = (
