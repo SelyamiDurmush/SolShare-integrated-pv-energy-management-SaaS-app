@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Float, Enum
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, Enum, Boolean
 from sqlalchemy.orm import relationship
 import enum
 from app.core.database import Base
@@ -16,6 +16,7 @@ class Building(Base):
     manager_id = Column(Integer, ForeignKey("users.id"))
     
     grid_connection_capacity_kw = Column(Float)
+    is_active = Column(Boolean, default=True)
 
     # Relationships
     manager = relationship("User", back_populates="managed_buildings")
@@ -38,3 +39,7 @@ class Apartment(Base):
     building = relationship("Building", back_populates="apartments")
     resident = relationship("User", back_populates="apartment")
     meter = relationship("Meter", back_populates="apartment", uselist=False)
+
+    @property
+    def resident_name(self):
+        return self.resident.full_name if self.resident else None

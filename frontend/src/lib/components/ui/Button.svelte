@@ -4,14 +4,14 @@
   interface Props {
     href?: string;
     variant?: 'primary' | 'secondary' | 'outline';
-    className?: string;
+    class?: string;
     onclick?: (e: MouseEvent) => void;
     type?: 'button' | 'submit' | 'reset';
     disabled?: boolean;
     children: Snippet;
   }
 
-  let { href = undefined, variant = 'primary', className = '', onclick, type = 'button', disabled = false, children }: Props = $props();
+  let { href = undefined, variant = 'primary', class: className = '', onclick, type = 'button', disabled = false, children }: Props = $props();
   
   const baseClass = "px-4 py-2 font-semibold transition-all duration-300 rounded-lg active:scale-95";
   const variants = {

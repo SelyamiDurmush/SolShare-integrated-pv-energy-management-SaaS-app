@@ -58,7 +58,7 @@
       method: "PATCH",
       headers: { Authorization: `Bearer ${token()}` },
     });
-    alerts = alerts.map((a) => (a.id === id ? { ...a, is_read: true } : a));
+    await loadAlerts();
     await alertState.refresh();
   }
 
@@ -72,7 +72,7 @@
       if (res.ok) {
         // Small delay so the animation plays
         await new Promise((r) => setTimeout(r, 250));
-        alerts = alerts.filter((a) => a.id !== id);
+        await loadAlerts();
         await alertState.refresh();
       }
     } finally {
@@ -90,7 +90,7 @@
       });
       if (res.ok) {
         await new Promise((r) => setTimeout(r, 250));
-        alerts = alerts.filter((a) => a.id !== id);
+        await loadAlerts();
         await alertState.refresh();
       }
     } finally {
@@ -111,7 +111,7 @@
           }),
         ),
       );
-      alerts = alerts.map((a) => ({ ...a, is_read: true }));
+      await loadAlerts();
       await alertState.refresh();
     } finally {
       isBulkWorking = false;
@@ -134,8 +134,8 @@
         ),
       );
       await new Promise((r) => setTimeout(r, 300));
-      alerts = [];
       removing = new Set();
+      await loadAlerts();
       await alertState.refresh();
     } finally {
       isBulkWorking = false;
