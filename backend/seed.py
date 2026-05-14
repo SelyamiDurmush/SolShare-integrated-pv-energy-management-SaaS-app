@@ -186,7 +186,7 @@ def seed_data():
     print(f"Admin User      : {settings.ADMIN_EMAIL} / {settings.ADMIN_PASSWORD}")
     print(f"Property Manager: manager@solshare.com  / manager123")
     for i, name in enumerate(resident_names, start=1):
-        print(f"  Resident {i}       : resident{i}@solshare.com / resident123  ({name})")
+        print(f"  Resident {i}    : resident{i}@solshare.com / resident123  ({name})")
 
 if __name__ == "__main__":
     seed_data()
