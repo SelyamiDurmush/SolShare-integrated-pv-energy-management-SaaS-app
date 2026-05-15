@@ -10,7 +10,7 @@ from app.api.deps import get_current_user
 
 router = APIRouter(prefix="/buildings", tags=["buildings"])
 
-@router.post("/", response_model=BuildingSchema)
+@router.post("", response_model=BuildingSchema)
 def create_building(
     building_in: BuildingCreate, 
     db: Session = Depends(get_db),
@@ -31,7 +31,7 @@ def create_building(
     db.refresh(db_building) 
     return db_building
 
-@router.get("/", response_model=List[BuildingSchema])
+@router.get("", response_model=List[BuildingSchema])
 def read_buildings(
     skip: int = 0, 
     limit: int = 100, 

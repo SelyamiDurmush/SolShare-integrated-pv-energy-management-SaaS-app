@@ -5,7 +5,9 @@ services:
     build: ./backend
     #'ports' removed because Nginx will talk to it internally on 8000
     volumes:
-      - sqlite_data:/app
+      - sqlite_data:/data
+    environment:
+      - DATABASE_URL=sqlite:////data/solshare.db
     restart: always
 
   frontend:

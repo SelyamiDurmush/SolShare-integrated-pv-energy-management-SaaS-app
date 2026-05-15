@@ -92,7 +92,7 @@
   async function fetchResidents() {
     const token = localStorage.getItem("access_token");
     try {
-      const res = await fetch("/api/v1/users/", {
+      const res = await fetch("/api/v1/users", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -115,11 +115,12 @@
     loadError = "";
     const token = localStorage.getItem("access_token");
     try {
-      const res = await fetch("/api/v1/buildings/", {
+      const res = await fetch("/api/v1/buildings", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
-        buildings = await res.json();
+        const data = await res.json();
+        buildings = Array.isArray(data) ? data : [];
       } else {
         loadError = "Failed to load buildings.";
       }
@@ -139,7 +140,7 @@
       const method = editingBuildingId ? "PATCH" : "POST";
       const url = editingBuildingId
         ? `/api/v1/buildings/${editingBuildingId}`
-        : "/api/v1/buildings/";
+        : "/api/v1/buildings";
 
       const payload: any = {
         name: formName,

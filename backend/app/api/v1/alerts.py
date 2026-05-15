@@ -28,7 +28,7 @@ router = APIRouter(prefix="/alerts", tags=["alerts"])
 
 # ── API Endpoints ──────────────────────────────────────────────────────────────
 
-@router.get("/")
+@router.get("")
 def get_alerts(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
