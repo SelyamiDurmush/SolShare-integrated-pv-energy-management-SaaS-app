@@ -245,7 +245,7 @@
 
   async function loadAlerts() {
     try {
-      const res = await fetch("/api/v1/alerts/?include_resolved=false", {
+      const res = await fetch("/api/v1/alerts?include_resolved=false", {
         headers: { Authorization: `Bearer ${token()}` },
       });
       if (res.ok) recentAlerts = (await res.json()).slice(0, 20);

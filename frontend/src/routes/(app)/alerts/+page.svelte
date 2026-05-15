@@ -39,7 +39,7 @@
     isLoading = true;
     try {
       const res = await fetch(
-        `/api/v1/alerts/?include_resolved=${showResolved}`,
+        `/api/v1/alerts?include_resolved=${showResolved}`,
         { headers: { Authorization: `Bearer ${token()}` } },
       );
       if (res.ok) alerts = await res.json();

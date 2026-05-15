@@ -10,7 +10,7 @@ export const alertState = $state({
         const token = localStorage.getItem('access_token');
         if (!token) return;
         try {
-            const res = await fetch('/api/v1/alerts/?include_resolved=false', {
+            const res = await fetch('/api/v1/alerts?include_resolved=false', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
