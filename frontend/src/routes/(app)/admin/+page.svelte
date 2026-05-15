@@ -35,7 +35,7 @@
   async function fetchUsers() {
     const token = localStorage.getItem("access_token");
     try {
-      const res = await fetch("/api/v1/users/", {
+      const res = await fetch("/api/v1/users", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) users = await res.json();
@@ -51,7 +51,7 @@
     addError = "";
     const token = localStorage.getItem("access_token");
     try {
-      const res = await fetch("/api/v1/users/", {
+      const res = await fetch("/api/v1/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

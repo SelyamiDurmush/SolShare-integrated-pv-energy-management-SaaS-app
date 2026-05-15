@@ -10,7 +10,7 @@ from app.api.deps import get_current_user
 
 router = APIRouter(prefix="/users", tags=["users"])
 
-@router.post("/", response_model=UserSchema)
+@router.post("", response_model=UserSchema)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
     if db_user:
